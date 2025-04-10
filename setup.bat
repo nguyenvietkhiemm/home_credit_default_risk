@@ -1,13 +1,13 @@
 @echo off
 setlocal enabledelayedexpansion
 
-
+python -m venv venv
 
 if not exist venv\Scripts\python.exe (
     echo Không tìm thấy môi trường ảo! Hãy tạo bằng 'python -m venv venv'
     exit /b
 )
-
+venv\Scripts\pip install -r requirements.txt
 for /d %%i in (venv\Lib\site-packages*) do set SITE_PACKAGES=%%i
 
 if not defined SITE_PACKAGES (
