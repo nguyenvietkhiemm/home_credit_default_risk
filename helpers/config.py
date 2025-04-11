@@ -14,9 +14,18 @@ req_bureau_cols = ['AMT_REQ_CREDIT_BUREAU_HOUR', 'AMT_REQ_CREDIT_BUREAU_DAY', 'A
 ## các cột dùng để tính toán với các bảng khác
 use_cols = ['SK_ID_CURR', 'AMT_INCOME_TOTAL', 'AMT_CREDIT', 'AMT_ANNUITY', 'AMT_GOODS_PRICE', 'DAYS_BIRTH', 'DAYS_EMPLOYED', 'DAYS_REGISTRATION', 'DAYS_ID_PUBLISH', 'DAYS_LAST_PHONE_CHANGE']
 
-## tên các cột của app trong use_cols
-app_money_cols = ['app_AMT_INCOME_TOTAL', 'app_AMT_CREDIT', 'app_AMT_ANNUITY', 'app_AMT_GOODS_PRICE']
-app_day_cols = ['app_DAYS_BIRTH', 'app_DAYS_EMPLOYED', 'app_DAYS_REGISTRATION', 'app_DAYS_ID_PUBLISH', 'app_DAYS_LAST_PHONE_CHANGE']
+rename_di = {
+'AMT_INCOME_TOTAL':       'app_AMT_INCOME_TOTAL', 
+'AMT_CREDIT':             'app_AMT_CREDIT', 
+'AMT_ANNUITY':            'app_AMT_ANNUITY',
+'AMT_GOODS_PRICE':        'app_AMT_GOODS_PRICE',
+
+'DAYS_BIRTH':             'app_DAYS_BIRTH', 
+'DAYS_EMPLOYED':          'app_DAYS_EMPLOYED', 
+'DAYS_REGISTRATION':      'app_DAYS_REGISTRATION', 
+'DAYS_ID_PUBLISH':        'app_DAYS_ID_PUBLISH', 
+'DAYS_LAST_PHONE_CHANGE': 'app_DAYS_LAST_PHONE_CHANGE',
+}
 
 
 
