@@ -1,5 +1,5 @@
 import pandas as pd
-from sitecustomize import ROOT  # lib này được khởi tạo ban đầu dự án
+from config import ROOT  # lib này được khởi tạo ban đầu dự án
 
 
 class Ingestion:

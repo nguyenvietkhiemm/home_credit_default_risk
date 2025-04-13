@@ -2,16 +2,18 @@ import os
 import glob
 import subprocess
 from pathlib import Path
-from sitecustomize import ROOT
+from config import ROOT
 
 folder = ROOT + "/jupyter"
 prefixes = ['_00', '002', '102', '202', '302', '402', '502', '602']
 output_folder = ROOT + "/src/engineering"
 
+
 def clean_and_align_script(script_path):
     with open(script_path, "r", encoding="utf-8") as file:
         lines = file.readlines()
-    cleaned_lines = [line for line in lines if line.strip() and not line.strip().startswith("#")]
+    cleaned_lines = [line for line in lines if line.strip(
+    ) and not line.strip().startswith("#")]
     with open(script_path, "w", encoding="utf-8") as file:
         file.writelines(cleaned_lines)
 
