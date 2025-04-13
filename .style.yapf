@@ -1,0 +1,10 @@
+[style]
+based_on_style = pep8
+column_limit = 200
+split_before_expression_after_opening_paren = false
+allow_multiline_lambdas = false
+each_dict_entry_on_separate_line = false
+split_complex_comprehension = false
+split_arguments_when_comma_terminated = false
+coalesce_brackets = true
+dedent_closing_brackets = true   

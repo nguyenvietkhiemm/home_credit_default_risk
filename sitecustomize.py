@@ -15,4 +15,4 @@ ROOT = current_dir
 if ROOT not in sys.path:
     sys.path.append(ROOT)
 
-print(f"ROOT: {ROOT}")
+# print(f"ROOT: {ROOT}")

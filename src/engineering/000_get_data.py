@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib as plt
-from sitecustomize import ROOT # lib này được khởi tạo ban đầu dự án
+from sitecustomize import ROOT  # lib này được khởi tạo ban đầu dự án
 from config.database.database import Database
 db = Database()
 import pandas as pd
@@ -20,7 +20,7 @@ def load_save(table_name=None, batch_size=100000):
         if not data:
             break
         df = pd.DataFrame(columns=columns, data=data)
-        dfs.append(df) 
+        dfs.append(df)
         df.to_csv(file_path_csv, mode="w" if first_write else "a", index=False, header=first_write)
         first_write = False
         print(f"Saved {len(data)} rows...")
