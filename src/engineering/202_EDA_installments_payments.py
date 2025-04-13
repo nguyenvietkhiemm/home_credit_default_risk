@@ -14,19 +14,15 @@ pd.set_option('display.max_colwidth', None)
 from sitecustomize import ROOT  # lib này được khởi tạo ban đầu dự án
 import helpers.view as view
 import helpers.EDA as EDA
-import helpers.config as config
+import config.config as config
 import modules.utils as utils
+from helpers.cache_clear import cache_clear
 importlib.reload(view)
 importlib.reload(EDA)
 importlib.reload(utils)
 importlib.reload(config)
 use_cols = config.use_cols
 prev_use_cols = config.prev_use_cols
-def cache_clear():
-    for var in list(globals()):
-        if var not in _keep_vars and not var.startswith("_"):
-            del globals()[var]
-    gc.collect()
 _keep_vars = set(globals().keys())  # lưu biến gốc
 installments = pd.read_pickle(ROOT + "/data/pkl/installments_payments.p")
 prev = pd.read_pickle(ROOT + "/data/pkl/previous_application.p")[prev_use_cols]
@@ -93,7 +89,4 @@ installments['AMT_PAYMENT-d-app_AMT_GOODS_PRICE'] = installments['AMT_PAYMENT'] 
 installments.replace(np.inf, np.nan, inplace=True)
 installments.replace(-np.inf, np.nan, inplace=True)
 installments.drop(columns=drop_cols, inplace=True)
-installments.to_pickle(ROOT + "/data/processed/f201_installments_payments.p")
-installments[installments['days_delayed_payment'] > 0].to_pickle(ROOT + "/data/processed/f201_installments_payments_delay.p")
-installments[installments['days_delayed_payment'] <= 0].to_pickle(ROOT + "/data/processed/f201_installments_payments_notdelay.p")
-cache_clear()
+cache_clear(globals())

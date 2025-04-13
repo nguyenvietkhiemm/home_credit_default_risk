@@ -18,11 +18,7 @@ import helpers.EDA as EDA
 import modules.multi as multi
 importlib.reload(view)
 importlib.reload(EDA)
-def cache_clear():
-    for var in list(globals()):
-        if var not in _keep_vars and not var.startswith("_"):
-            del globals()[var]
-    gc.collect()
+from helpers.cache_clear import cache_clear
 _keep_vars = set(globals().keys())  # lưu biến gốc
 prev = pd.read_csv(ROOT + "/data/csv/previous_application.csv")
 train = pd.read_pickle(ROOT + "/data/pkl/application_train.p")
@@ -40,7 +36,7 @@ prev.loc[~prev['SK_ID_CURR'].isin(train_id), 'data'] = 0
 prev_train = prev[prev["data"] == 1]
 prev_test = prev[prev["data"] == 0]
 _keep_vars.update(["prev", "train", "test", "obj_features", "con_features"])
-cache_clear()
+cache_clear(globals(), _keep_vars)
 prev['AMT_APPLICATION'] = prev['AMT_APPLICATION'].replace(0, np.nan)
 prev['AMT_CREDIT'] = prev['AMT_CREDIT'].replace(0, np.nan)
 prev['CNT_PAYMENT'] = prev['CNT_PAYMENT'].replace(0, np.nan)
@@ -170,7 +166,7 @@ for c1 in prev_day_cols:
         prev[f'{c1}-d-{c2}'] = prev[c1] / prev[c2]
 _keep_vars.update(["prev"])
 del prev_tmp
-cache_clear()
+cache_clear(globals(), _keep_vars)
 prev['cnt_paid'] = prev.apply(lambda x: min(np.ceil((x['DAYS_FIRST_DUE'] / -30) + 1), x['CNT_PAYMENT']), axis=1)
 prev['cnt_paid_ratio'] = prev['cnt_paid'] / prev['CNT_PAYMENT']
 prev['cnt_unpaid'] = prev['CNT_PAYMENT'] - prev['cnt_paid']
@@ -206,4 +202,4 @@ for start in range(0, n, batch_size):
     del batch
     gc.collect()
 tmp = pd.read_pickle(ROOT + "/data/processed/prev_batch_1.p")
-cache_clear()
+cache_clear(globals())

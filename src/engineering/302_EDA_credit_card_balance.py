@@ -14,9 +14,10 @@ pd.set_option('display.max_colwidth', None)
 from sitecustomize import ROOT  # lib này được khởi tạo ban đầu dự án
 import helpers.view as view
 import helpers.EDA as EDA
-import helpers.config as config
+import config.config as config
 import modules.utils as utils
 import modules.multi as multi
+from helpers.cache_clear import cache_clear
 importlib.reload(view)
 importlib.reload(EDA)
 importlib.reload(utils)
@@ -25,11 +26,6 @@ importlib.reload(multi)
 use_cols = config.use_cols
 prev_use_cols = config.prev_use_cols
 app_day_cols = config.app_day_cols
-def cache_clear():
-    for var in list(globals()):
-        if var not in _keep_vars and not var.startswith("_"):
-            del globals()[var]
-    gc.collect()
 _keep_vars = set(globals().keys())  # lưu biến gốc
 credit_balance = pd.read_pickle(ROOT + "/data/pkl/credit_card_balance.p")
 credit_balance["AMT_BALANCE-d-AMT_CREDIT_LIMIT_ACTUAL"] = credit_balance["AMT_BALANCE"] / credit_balance["AMT_CREDIT_LIMIT_ACTUAL"]
@@ -112,4 +108,4 @@ for i in range(0, n_rows, batch_size):
     del combined, credit_batch, df_batch
     gc.collect()
 tmp = pd.read_pickle(ROOT + f'/data/processed/f301_credit_balance_batch_1.p')  # test
-cache_clear()
+cache_clear(globals())

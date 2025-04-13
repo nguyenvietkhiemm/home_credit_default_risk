@@ -1,3 +1,14 @@
+
+
+
+
+
+
+
+
+
+
+
 ### APP ###
 
 money_cols = ["AMT_INCOME_TOTAL", "AMT_CREDIT", "AMT_ANNUITY", "AMT_GOODS_PRICE"]

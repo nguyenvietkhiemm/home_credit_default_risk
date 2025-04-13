@@ -17,11 +17,7 @@ import helpers.view as view
 import helpers.EDA as EDA
 importlib.reload(view)
 importlib.reload(EDA)
-def cache_clear():
-    for var in list(globals()):
-        if var not in _keep_vars and not var.startswith("_"):
-            del globals()[var]
-    gc.collect()
+from helpers.cache_clear import cache_clear
 _keep_vars = set(globals().keys())  # lưu biến gốc
 train = pd.read_pickle(ROOT + "/data/pkl/application_train.p")
 test = pd.read_pickle(ROOT + "/data/pkl/application_test.p")
@@ -147,4 +143,4 @@ trte["DEF_30_CNT_SOCIAL_CIRCLE-d-OBS_30_CNT_SOCIAL_CIRCLE"] = trte["DEF_30_CNT_S
 trte["DEF_60_CNT_SOCIAL_CIRCLE-d-OBS_60_CNT_SOCIAL_CIRCLE"] = trte["DEF_60_CNT_SOCIAL_CIRCLE"] / trte["OBS_60_CNT_SOCIAL_CIRCLE"]
 trte[trte["data"] == 1].to_pickle(ROOT + "/data/processed/f001_train.p")
 trte[trte["data"] == 0].to_pickle(ROOT + "/data/processed/f001_test.p")
-cache_clear()
+cache_clear(globals())

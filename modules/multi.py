@@ -14,4 +14,3 @@ def multi(c, df):
     ret_pctchng = ret_pctchng.rename(f'{c}_pctchange')
 
     return pd.concat([ret_diff, ret_pctchng], axis=1)
-

@@ -5,7 +5,7 @@ from pathlib import Path
 from sitecustomize import ROOT
 
 folder = ROOT + "/jupyter"
-prefixes = ['000', '002', '102', '202', '302', '402', '502', '602']
+prefixes = ['_00', '002', '102', '202', '302', '402', '502', '602']
 output_folder = ROOT + "/src/engineering"
 
 def clean_and_align_script(script_path):

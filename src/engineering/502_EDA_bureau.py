@@ -14,9 +14,10 @@ pd.set_option('display.max_colwidth', None)
 from sitecustomize import ROOT  # lib này được khởi tạo ban đầu dự án
 import helpers.view as view
 import helpers.EDA as EDA
-import helpers.config as config
+import config.config as config
 import modules.utils as utils
 import modules.multi as multi
+from helpers.cache_clear import cache_clear
 importlib.reload(view)
 importlib.reload(EDA)
 importlib.reload(utils)
@@ -25,11 +26,6 @@ importlib.reload(multi)
 use_cols = config.use_cols
 prev_use_cols = config.prev_use_cols
 app_day_cols = config.app_day_cols
-def cache_clear():
-    for var in list(globals()):
-        if var not in _keep_vars and not var.startswith("_"):
-            del globals()[var]
-    gc.collect()
 _keep_vars = set(globals().keys())  # lưu biến gốc
 bureau = pd.read_pickle(ROOT + "/data/pkl/bureau.p")
 bureau_money_cols = ["AMT_CREDIT_MAX_OVERDUE", 'AMT_CREDIT_SUM', 'AMT_CREDIT_SUM_DEBT', 'AMT_CREDIT_SUM_LIMIT', 'AMT_CREDIT_SUM_OVERDUE', "AMT_ANNUITY"]
@@ -92,4 +88,4 @@ del df_list
 gc.collect()
 bureau = pd.concat([bureau, df], axis=1)
 bureau.to_pickle(ROOT + "/data/processed/f501_bureau.p")
-cache_clear()
+cache_clear(globals())

@@ -1,6 +1,7 @@
 # các khởi tạo ban đầu dự án
 # cấu hình cho vị trí đứng là ROOT dự án
 # khi chạy setup.bat, file sitecustomize.py sẽ được copy vào venv/Lib/site-packages và tự động run cũng như caching lại
+# khi kernel được khởi động, sitecustomize được chạy cùng
 
 import sys
 import os

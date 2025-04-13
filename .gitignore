@@ -9,3 +9,7 @@ venv
 data
 /data
 ./data
+
+image.png
+/image.png
+./image.png
