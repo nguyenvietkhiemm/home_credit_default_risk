@@ -12,16 +12,20 @@ pd.set_option('display.max_columns', 99)
 pd.set_option('display.max_rows', 200)
 pd.reset_option('display.float_format')
 pd.set_option('display.max_colwidth', None)
-from sitecustomize import ROOT  # lib này được khởi tạo ban đầu dự án
-from helpers.cache_clear import cache_clear
+from config import ROOT, use_cols, prev_use_cols  # lib này được khởi tạo ban đầu dự án
 import helpers.view as view
 import helpers.EDA as EDA
+import config
+import modules.utils as utils
 import modules.multi as multi
+from helpers.cache_clear import cache_clear
 importlib.reload(view)
 importlib.reload(EDA)
-importlib.reload(multi)
+importlib.reload(utils)
+importlib.reload(config)
+get_pickle = utils.get_pickle
 _keep_vars = set(globals().keys())  # lưu biến gốc
-pos_balance = pd.read_pickle(ROOT + "/data/pkl/pos_cash_balance.p")
+pos_balance = get_pickle("pos_cash")
 pos_balance.loc[((pos_balance["NAME_CONTRACT_STATUS"] == 'Active') & (pos_balance["CNT_INSTALMENT_FUTURE"] == 0)), 'NAME_CONTRACT_STATUS'] = 'Completed'  ####### sửa
 pos_balance.loc[(["NAME_CONTRACT_STATUS"] == 'Completed') & (pos_balance["CNT_INSTALMENT_FUTURE"] != 0), "CNT_INSTALMENT_FUTURE"] = "Active"  ####### sửa
 pos_balance_0 = pos_balance[pos_balance['CNT_INSTALMENT_FUTURE'] == 0].copy()

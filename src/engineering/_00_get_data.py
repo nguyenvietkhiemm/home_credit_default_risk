@@ -1,12 +1,11 @@
 import pandas as pd
 import numpy as np
 import matplotlib as plt
-from sitecustomize import ROOT  # lib này được khởi tạo ban đầu dự án
+from config import ROOT  # lib này được khởi tạo ban đầu dự án
 import os
 from dotenv import load_dotenv
 load_dotenv()
 from config.database import Database
-from config.config import table_names
 db = Database()
 from modules.ingestion import Ingestion
 load_save = Ingestion(db).load_save

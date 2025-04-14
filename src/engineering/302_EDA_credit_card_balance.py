@@ -11,10 +11,10 @@ pd.set_option('display.max_columns', 99)
 pd.set_option('display.max_rows', 200)
 pd.reset_option('display.float_format')
 pd.set_option('display.max_colwidth', None)
-from sitecustomize import ROOT  # lib này được khởi tạo ban đầu dự án
+from config import ROOT, use_cols, prev_use_cols, app_day_cols  # lib này được khởi tạo ban đầu dự án
 import helpers.view as view
 import helpers.EDA as EDA
-import config.config as config
+import config
 import modules.utils as utils
 import modules.multi as multi
 from helpers.cache_clear import cache_clear
@@ -22,12 +22,9 @@ importlib.reload(view)
 importlib.reload(EDA)
 importlib.reload(utils)
 importlib.reload(config)
-importlib.reload(multi)
-use_cols = config.use_cols
-prev_use_cols = config.prev_use_cols
-app_day_cols = config.app_day_cols
+get_pickle = utils.get_pickle
 _keep_vars = set(globals().keys())  # lưu biến gốc
-credit_balance = pd.read_pickle(ROOT + "/data/pkl/credit_card_balance.p")
+credit_balance = get_pickle("credit_card")
 credit_balance["AMT_BALANCE-d-AMT_CREDIT_LIMIT_ACTUAL"] = credit_balance["AMT_BALANCE"] / credit_balance["AMT_CREDIT_LIMIT_ACTUAL"]
 credit_balance['AMT_DRAWINGS_CURRENT-d-AMT_CREDIT_LIMIT_ACTUAL'] = credit_balance['AMT_DRAWINGS_CURRENT'] / credit_balance['AMT_CREDIT_LIMIT_ACTUAL']
 credit_balance['AMT_TOTAL_RECEIVABLE-d-AMT_BALANCE'] = credit_balance['AMT_TOTAL_RECEIVABLE'] / credit_balance['AMT_BALANCE']
@@ -51,8 +48,8 @@ credit_balance['SK_DPD-s-SK_DPD_DEF_over10'] = (credit_balance['SK_DPD-s-SK_DPD_
 credit_balance['SK_DPD-s-SK_DPD_DEF_over15'] = (credit_balance['SK_DPD-s-SK_DPD_DEF'] > 15) * 1
 credit_balance['SK_DPD-s-SK_DPD_DEF_over20'] = (credit_balance['SK_DPD-s-SK_DPD_DEF'] > 20) * 1
 credit_balance['SK_DPD-s-SK_DPD_DEF_over25'] = (credit_balance['SK_DPD-s-SK_DPD_DEF'] > 25) * 1
-test = pd.read_pickle(ROOT + "/data/pkl/application_test.p")[use_cols]
-train = pd.read_pickle(ROOT + "/data/pkl/application_train.p")[use_cols]
+test = get_pickle("test")[use_cols]
+train = get_pickle("train")[use_cols]
 trte = utils.get_trte(train, test)
 trte[app_day_cols] = trte[app_day_cols] / 30  # get month
 del train, test
@@ -107,5 +104,4 @@ for i in range(0, n_rows, batch_size):
     combined.to_pickle(ROOT + f'/data/processed/f301_credit_balance_batch_{i//batch_size + 1}.p')
     del combined, credit_batch, df_batch
     gc.collect()
-tmp = pd.read_pickle(ROOT + f'/data/processed/f301_credit_balance_batch_1.p')  # test
 cache_clear(globals())

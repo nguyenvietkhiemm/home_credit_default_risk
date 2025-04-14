@@ -12,15 +12,18 @@ pd.set_option('display.max_columns', 99)
 pd.set_option('display.max_rows', 200)
 pd.reset_option('display.float_format')
 pd.set_option('display.max_colwidth', None)
-from sitecustomize import ROOT  # lib này được khởi tạo ban đầu dự án
+from config import ROOT  # lib này được khởi tạo ban đầu dự án
 import helpers.view as view
 import helpers.EDA as EDA
+import modules.utils as utils
 importlib.reload(view)
 importlib.reload(EDA)
+importlib.reload(utils)
 from helpers.cache_clear import cache_clear
+get_pickle = utils.get_pickle
 _keep_vars = set(globals().keys())  # lưu biến gốc
-train = pd.read_pickle(ROOT + "/data/pkl/application_train.p")
-test = pd.read_pickle(ROOT + "/data/pkl/application_test.p")
+train = get_pickle("train")
+test = get_pickle("test")
 obj_features = [
     'NAME_CONTRACT_TYPE', 'CODE_GENDER', 'FLAG_OWN_CAR', 'FLAG_OWN_REALTY', 'NAME_TYPE_SUITE', 'NAME_INCOME_TYPE', 'NAME_EDUCATION_TYPE', 'NAME_FAMILY_STATUS', 'NAME_HOUSING_TYPE', 'FLAG_MOBIL',
     'FLAG_EMP_PHONE', 'FLAG_WORK_PHONE', 'FLAG_CONT_MOBILE', 'FLAG_PHONE', 'FLAG_EMAIL', 'OCCUPATION_TYPE', 'REGION_RATING_CLIENT', 'REGION_RATING_CLIENT_W_CITY', 'WEEKDAY_APPR_PROCESS_START',
@@ -58,6 +61,11 @@ trte['alldocs_sum'] = trte[docs].sum(axis=1)
 trte['alldocs_std'] = trte[docs].std(axis=1)
 trte['alllives_sum'] = trte[live].sum(axis=1)
 trte['AMT_INCOME_TOTAL_by_ORGANIZATION_TYPE'] = trte['ORGANIZATION_TYPE'].map(inc_by_org)
+trte = trte.copy()
+avg_cols = ['APARTMENTS_AVG', 'BASEMENTAREA_AVG', 'YEARS_BEGINEXPLUATATION_AVG', 'YEARS_BUILD_AVG', 'COMMONAREA_AVG', 'ELEVATORS_AVG', 'ENTRANCES_AVG', 'FLOORSMAX_AVG', 'FLOORSMIN_AVG', 'LANDAREA_AVG', 'LIVINGAPARTMENTS_AVG', 'LIVINGAREA_AVG', 'NONLIVINGAPARTMENTS_AVG', 'NONLIVINGAREA_AVG']
+mode_cols = ['APARTMENTS_MODE', 'BASEMENTAREA_MODE', 'YEARS_BEGINEXPLUATATION_MODE', 'YEARS_BUILD_MODE', 'COMMONAREA_MODE', 'ELEVATORS_MODE', 'ENTRANCES_MODE', 'FLOORSMAX_MODE', 'FLOORSMIN_MODE', 'LANDAREA_MODE', 'LIVINGAPARTMENTS_MODE', 'LIVINGAREA_MODE', 'NONLIVINGAPARTMENTS_MODE', 'NONLIVINGAREA_MODE', 'TOTALAREA_MODE']
+medi_cols = ['APARTMENTS_MEDI', 'BASEMENTAREA_MEDI', 'YEARS_BEGINEXPLUATATION_MEDI', 'YEARS_BUILD_MEDI', 'COMMONAREA_MEDI', 'ELEVATORS_MEDI', 'ENTRANCES_MEDI', 'FLOORSMAX_MEDI', 'FLOORSMIN_MEDI', 'LANDAREA_MEDI', 'LIVINGAPARTMENTS_MEDI', 'LIVINGAREA_MEDI', 'NONLIVINGAPARTMENTS_MEDI', 'NONLIVINGAREA_MEDI']
+req_bureau_cols = ['AMT_REQ_CREDIT_BUREAU_HOUR', 'AMT_REQ_CREDIT_BUREAU_DAY', 'AMT_REQ_CREDIT_BUREAU_WEEK', 'AMT_REQ_CREDIT_BUREAU_MON', 'AMT_REQ_CREDIT_BUREAU_QRT', 'AMT_REQ_CREDIT_BUREAU_YEAR']
 trte['AMT_CREDIT-d-AMT_INCOME_TOTAL'] = trte['AMT_CREDIT'] / trte['AMT_INCOME_TOTAL']
 trte['AMT_ANNUITY-d-AMT_INCOME_TOTAL'] = trte['AMT_ANNUITY'] / trte['AMT_INCOME_TOTAL']
 trte['AMT_GOODS_PRICE-d-AMT_INCOME_TOTAL'] = trte['AMT_GOODS_PRICE'] / trte['AMT_INCOME_TOTAL']

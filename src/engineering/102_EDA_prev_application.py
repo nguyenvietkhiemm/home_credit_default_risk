@@ -12,17 +12,21 @@ pd.set_option('display.max_columns', 99)
 pd.set_option('display.max_rows', 200)
 pd.reset_option('display.float_format')
 pd.set_option('display.max_colwidth', None)
-from sitecustomize import ROOT  # lib này được khởi tạo ban đầu dự án
+from config import ROOT  # lib này được khởi tạo ban đầu dự án
 import helpers.view as view
 import helpers.EDA as EDA
+import modules.utils as utils
 import modules.multi as multi
 importlib.reload(view)
 importlib.reload(EDA)
+importlib.reload(multi)
+importlib.reload(utils)
 from helpers.cache_clear import cache_clear
+get_pickle = utils.get_pickle
 _keep_vars = set(globals().keys())  # lưu biến gốc
-prev = pd.read_csv(ROOT + "/data/csv/previous_application.csv")
-train = pd.read_pickle(ROOT + "/data/pkl/application_train.p")
-test = pd.read_pickle(ROOT + "/data/pkl/application_test.p")
+prev = get_pickle("prev")
+train = get_pickle("train")
+test = get_pickle("test")
 obj_features = [c for c in prev.columns if (prev[c].dtype == "O") | (prev[c].nunique() <= 7)]
 con_features = [c for c in prev.columns if c not in obj_features]
 prev_money_cols = ['AMT_ANNUITY', 'AMT_APPLICATION', 'AMT_CREDIT', 'AMT_DOWN_PAYMENT', 'AMT_GOODS_PRICE']
@@ -156,7 +160,7 @@ cols = [
 ]
 df_list = []
 for col in cols:
-    df = multi.multi(col)  # diff pctchange
+    df = multi.multi(col, prev)  # diff pctchange
     df_list.append(df)
 df = pd.concat(df_list, axis=1)
 prev = pd.concat([prev, df], axis=1)
@@ -165,7 +169,6 @@ for c1 in prev_day_cols:
         prev[f'{c1}-s-{c2}'] = prev[c1] - prev[c2]
         prev[f'{c1}-d-{c2}'] = prev[c1] / prev[c2]
 _keep_vars.update(["prev"])
-del prev_tmp
 cache_clear(globals(), _keep_vars)
 prev['cnt_paid'] = prev.apply(lambda x: min(np.ceil((x['DAYS_FIRST_DUE'] / -30) + 1), x['CNT_PAYMENT']), axis=1)
 prev['cnt_paid_ratio'] = prev['cnt_paid'] / prev['CNT_PAYMENT']
@@ -201,5 +204,4 @@ for start in range(0, n, batch_size):
     batch.to_pickle(ROOT + f'/data/processed/f101_prev_batch_{start // batch_size + 1}.p')
     del batch
     gc.collect()
-tmp = pd.read_pickle(ROOT + "/data/processed/prev_batch_1.p")
 cache_clear(globals())

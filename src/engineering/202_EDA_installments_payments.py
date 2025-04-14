@@ -11,23 +11,20 @@ pd.set_option('display.max_columns', 99)
 pd.set_option('display.max_rows', 200)
 pd.reset_option('display.float_format')
 pd.set_option('display.max_colwidth', None)
-from sitecustomize import ROOT  # lib này được khởi tạo ban đầu dự án
+from config import ROOT, use_cols, prev_use_cols  # lib này được khởi tạo ban đầu dự án
+import config
 import helpers.view as view
 import helpers.EDA as EDA
-import config.config as config
 import modules.utils as utils
 from helpers.cache_clear import cache_clear
 importlib.reload(view)
 importlib.reload(EDA)
 importlib.reload(utils)
 importlib.reload(config)
-use_cols = config.use_cols
-prev_use_cols = config.prev_use_cols
+get_pickle = utils.get_pickle
 _keep_vars = set(globals().keys())  # lưu biến gốc
-installments = pd.read_pickle(ROOT + "/data/pkl/installments_payments.p")
-prev = pd.read_pickle(ROOT + "/data/pkl/previous_application.p")[prev_use_cols]
-train = pd.read_pickle(ROOT + "/data/pkl/application_train.p")[use_cols]
-test = pd.read_pickle(ROOT + "/data/pkl/application_test.p")[use_cols]
+installments = get_pickle("installments")
+prev = get_pickle("prev")[prev_use_cols]
 installments.sort_values(["SK_ID_PREV", "DAYS_ENTRY_PAYMENT"], ascending=[True, True], inplace=True)
 installments.reset_index(drop=True, inplace=True)
 installments["index"] = installments.index
@@ -71,6 +68,10 @@ prev['CNT_PAYMENT'].replace(0, np.nan, inplace=True)
 installments = installments.merge(prev[["SK_ID_PREV", "CNT_PAYMENT", "AMT_ANNUITY"]], on="SK_ID_PREV", how='left')
 installments["NUM_INSTALMENT_ratio"] = installments["NUM_INSTALMENT_NUMBER"] / installments["CNT_PAYMENT"]
 installments['AMT_PAYMENT-d-AMT_ANNUITY'] = installments['AMT_PAYMENT'] / installments['AMT_ANNUITY']
+_keep_vars.update(["installments"])
+cache_clear(globals(), _keep_vars)
+train = get_pickle("train")[use_cols]
+test = get_pickle("test")[use_cols]
 trte = utils.get_trte(train, test)
 drop_cols = list(set(list(trte.columns) + ["CNT_PAYMENT", "AMT_ANNUITY", "index"]))
 for col in ["SK_ID_PREV", "SK_ID_CURR"]:
@@ -89,4 +90,7 @@ installments['AMT_PAYMENT-d-app_AMT_GOODS_PRICE'] = installments['AMT_PAYMENT'] 
 installments.replace(np.inf, np.nan, inplace=True)
 installments.replace(-np.inf, np.nan, inplace=True)
 installments.drop(columns=drop_cols, inplace=True)
+installments.to_pickle(ROOT + "/data/processed/f201_installments_payments.p")
+installments[installments['days_delayed_payment'] > 0].to_pickle(ROOT + "/data/processed/f201_installments_payments_delay.p")
+installments[installments['days_delayed_payment'] <= 0].to_pickle(ROOT + "/data/processed/f201_installments_payments_notdelay.p")
 cache_clear(globals())
