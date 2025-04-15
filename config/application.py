@@ -21,6 +21,20 @@ app_con_features = [
     'AMT_REQ_CREDIT_BUREAU_YEAR'
 ]
 
+app_categorical_features = ['NAME_CONTRACT_TYPE',
+                         'NAME_TYPE_SUITE',
+                         'NAME_INCOME_TYPE',
+                         'NAME_EDUCATION_TYPE',
+                         'NAME_FAMILY_STATUS',
+                         'NAME_HOUSING_TYPE',
+                         'OCCUPATION_TYPE',
+                         'WEEKDAY_APPR_PROCESS_START',
+                         'ORGANIZATION_TYPE',
+                         'FONDKAPREMONT_MODE',
+                         'HOUSETYPE_MODE',
+                         'WALLSMATERIAL_MODE',
+                         ]
+
 money_cols = ["AMT_INCOME_TOTAL", "AMT_CREDIT",
               "AMT_ANNUITY", "AMT_GOODS_PRICE"]
 day_cols = ["DAYS_BIRTH", "DAYS_EMPLOYED", "DAYS_REGISTRATION",
@@ -39,6 +53,8 @@ social_cols = ["OBS_30_CNT_SOCIAL_CIRCLE", "DEF_30_CNT_SOCIAL_CIRCLE",
                "OBS_60_CNT_SOCIAL_CIRCLE", "DEF_60_CNT_SOCIAL_CIRCLE"]
 req_bureau_cols = ['AMT_REQ_CREDIT_BUREAU_HOUR', 'AMT_REQ_CREDIT_BUREAU_DAY', 'AMT_REQ_CREDIT_BUREAU_WEEK',
                    'AMT_REQ_CREDIT_BUREAU_MON', 'AMT_REQ_CREDIT_BUREAU_QRT', 'AMT_REQ_CREDIT_BUREAU_YEAR']
+
+
 
 # các cột dùng để tính toán với các bảng khác
 use_cols = ['SK_ID_CURR', 'AMT_INCOME_TOTAL', 'AMT_CREDIT', 'AMT_ANNUITY', 'AMT_GOODS_PRICE',
