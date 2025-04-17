@@ -11,3 +11,15 @@ paths = {
     "bureau_balance": ROOT + "/data/pkl/bureau_balance.p",
     "description": ROOT + "/data/pkl/description.p"
 }
+
+pickles_paths = {
+    "train": ROOT + "/data/processed/train",
+    "test": ROOT + "/data/processed/test",
+    "prev": ROOT + "/data/processed/prev",
+    "installments": ROOT + "/data/processed/installments",
+    "credit_card": ROOT + "/data/processed/credit_card",
+    "pos_cash": ROOT + "/data/processed/pos_cash",
+    "bureau": ROOT + "/data/processed/bureau",
+    "bureau_balance": ROOT + "/data/processed/bureau_balance",
+    "description": ROOT + "/data/processed/description"
+}
