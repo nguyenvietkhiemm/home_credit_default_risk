@@ -10,13 +10,11 @@ from helpers.cache_clear import cache_clear
 get_pickle = utils.get_pickle
 _keep_vars = set(globals().keys())  # lưu biến gốc
 
-prev = get_pickle("prev")
-train = get_pickle("train")
-test = get_pickle("test")
-
 def prev_extract(test_run = False):
     if test_run:
         print("extract prev")
+        for path in utils.get_pickle_paths(name="prev"):
+            print(path)
         return
     
     prev = utils.get_pickle("prev")
@@ -172,7 +170,7 @@ def prev_extract(test_run = False):
 
         return prev
 
-    for path in [os.path.join(processed_paths["prev"], f) for f in os.listdir(processed_paths["prev"]) if os.path.isfile(os.path.join(processed_paths["prev"], f))]:
+    for path in utils.get_pickle_paths(name="prev"):
         process_file(path).to_pickle(path)
 
     print("extract prev")

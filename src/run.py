@@ -1,1 +1,3 @@
-from config import ROOT
+from extract import extract
+
+extract()

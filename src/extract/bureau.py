@@ -13,6 +13,8 @@ _keep_vars = set(globals().keys())  # lưu biến gốc
 def bureau_extract(test_run=False):
     if test_run:
         print("extract bureau")
+        for path in utils.get_pickle_paths(name="bureau"):
+            print(path)
         return
     
     bureau = get_pickle("bureau")

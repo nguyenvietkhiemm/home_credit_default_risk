@@ -11,6 +11,8 @@ _keep_vars = set(globals().keys())  # lưu biến gốc
 def train_test_extract(test_run=False):
     if test_run:
         print("extract train test")
+        for path in utils.get_pickle_paths(name="train"):
+            print(path)
         return
     
     train = utils.get_pickle("train")

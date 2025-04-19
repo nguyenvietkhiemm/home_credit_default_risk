@@ -10,6 +10,8 @@ _keep_vars = set(globals().keys())  # lưu biến gốc
 def pos_cash_extract(test_run = False):
     if test_run:
         print("extract pos cash")
+        for path in utils.get_pickle_paths(name="pos_cash"):
+            print(path)
         return
     
     pos_balance = get_pickle("pos_cash")

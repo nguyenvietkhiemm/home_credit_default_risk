@@ -10,6 +10,8 @@ _keep_vars = set(globals().keys())  # lưu biến gốc
 def bureau_balance_extract(test_run=False):
     if test_run:
         print("extract bureau balance")
+        for path in utils.get_pickle_paths(name="bureau_balance"):
+            print(path)
         return
     
     bureau_balance = get_pickle("bureau_balance")

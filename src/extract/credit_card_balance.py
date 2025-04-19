@@ -13,6 +13,8 @@ _keep_vars = set(globals().keys())  # lưu biến gốc
 def credit_balance_extract(test_run=False):
     if test_run:
         print("extract credit balance")
+        for path in utils.get_pickle_paths(name="credit_card"):
+            print(path)
         return
     
     credit_balance = get_pickle("credit_card")
@@ -83,15 +85,9 @@ def credit_balance_extract(test_run=False):
     del df_list
     gc.collect()
     utils.to_pickles(credit_balance, "credit_card")
-    credit_balance = utils.get_pickles("credit_card")
-    from config import processed_paths
-    credit_card_dir = processed_paths["credit_card"]
-    credit_card_paths = sorted(
-        [os.path.join(credit_card_dir, f) for f in os.listdir(credit_card_dir) if f.endswith(".p")],
-        key=lambda x: int(os.path.splitext(os.path.basename(x))[0].split("_")[-1])
-    )
+
     i=0
-    for path in credit_card_paths:
+    for path in utils.get_pickle_paths(name="credit_card"):
         credit_balance = pd.read_pickle(path)
         df_batch = df.iloc[i:i+credit_balance.shape[0]]
         merged = df_batch.join(credit_balance)

@@ -24,6 +24,22 @@ def to_pickles(df, name=None, chunk_size=CHUNK_SIZE):
         df.iloc[i:i+chunk_size].to_pickle(f"{path}/p_{i//chunk_size}.p")
 
 
+def get_pickle_paths(name=None, dir="processed"):
+    if name is None:
+        print("name=None")
+        return
+    if dir=="processed":
+        paths_dir = processed_paths[name]
+    elif dir=="feature":
+        paths_dir = feature_paths[name]
+        
+    files = sorted(
+        [os.path.join(paths_dir, f) for f in os.listdir(paths_dir) if f.endswith(".p")],
+        key=lambda x: int(os.path.splitext(os.path.basename(x))[0].split("_")[-1])
+    )
+    
+    return files
+
 def get_pickles(name=None, cols=None):
     if name is None:
         print("name=None")

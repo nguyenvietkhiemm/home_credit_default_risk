@@ -11,6 +11,8 @@ _keep_vars = set(globals().keys())  # lưu biến gốc
 def installments_payments_extract(test_run=False):
     if test_run:
         print("extract installments payments")
+        for path in utils.get_pickle_paths(name="installments"):
+            print(path)
         return
     
     installments = get_pickle("installments")
