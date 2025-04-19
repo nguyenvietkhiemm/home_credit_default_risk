@@ -12,7 +12,7 @@ paths = {
     "description": ROOT + "/data/pkl/description.p"
 }
 
-pickles_paths = {
+processed_paths = {
     "train": ROOT + "/data/processed/train",
     "test": ROOT + "/data/processed/test",
     "prev": ROOT + "/data/processed/prev",
@@ -22,4 +22,16 @@ pickles_paths = {
     "bureau": ROOT + "/data/processed/bureau",
     "bureau_balance": ROOT + "/data/processed/bureau_balance",
     "description": ROOT + "/data/processed/description"
+}
+
+feature_paths = {
+    "train": ROOT + "/data/feature/train",
+    "test": ROOT + "/data/feature/test",
+    "prev": ROOT + "/data/feature/prev",
+    "installments": ROOT + "/data/feature/installments",
+    "credit_card": ROOT + "/data/feature/credit_card",
+    "pos_cash": ROOT + "/data/feature/pos_cash",
+    "bureau": ROOT + "/data/feature/bureau",
+    "bureau_balance": ROOT + "/data/feature/bureau_balance",
+    "description": ROOT + "/data/feature/description"
 }

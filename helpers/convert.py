@@ -5,7 +5,8 @@ from pathlib import Path
 from config import ROOT
 
 folder = ROOT + "/jupyter"
-prefixes = ['_00', '002', '102', '202', '302', '402', '502', '602']
+# prefixes = ['_00', '002', '102', '202', '302', '402', '502', '602']
+prefixes = ['302']
 output_folder = ROOT + "/src/engineering"
 
 

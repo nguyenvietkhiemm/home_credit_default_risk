@@ -21,7 +21,7 @@ app_con_features = [
     'AMT_REQ_CREDIT_BUREAU_YEAR'
 ]
 
-app_categorical_features = ['NAME_CONTRACT_TYPE',
+app_categorical_features = ['NAME_CONTRACT_TYPE', # đã loại trừ các cat_col nhị phân
                          'NAME_TYPE_SUITE',
                          'NAME_INCOME_TYPE',
                          'NAME_EDUCATION_TYPE',

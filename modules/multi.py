@@ -1,3 +1,5 @@
+# tính diff và pctchange
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt

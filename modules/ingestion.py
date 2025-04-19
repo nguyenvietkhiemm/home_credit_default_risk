@@ -1,3 +1,5 @@
+# lấy dữ liệu từ database
+
 import pandas as pd
 from config import ROOT  # lib này được khởi tạo ban đầu dự án
 
