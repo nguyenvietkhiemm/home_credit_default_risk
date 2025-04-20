@@ -16,3 +16,12 @@ def multi(c, df):
     ret_pctchng = ret_pctchng.rename(f'{c}_pctchange')
 
     return pd.concat([ret_diff, ret_pctchng], axis=1)
+
+def diff_pctchange(cols, _df):
+    df_list = []
+    for col in cols:
+        df = multi(col, _df)  # diff pctchange
+        df_list.append(df)
+    df = pd.concat(df_list, axis=1)
+    
+    return df

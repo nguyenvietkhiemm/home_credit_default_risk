@@ -35,3 +35,15 @@ feature_paths = {
     "bureau_balance": ROOT + "/data/feature/bureau_balance",
     "description": ROOT + "/data/feature/description"
 }
+
+imputation_paths = {
+    "train": ROOT + "/data/imputation_feature/train",
+    "test": ROOT + "/data/imputation_feature/test",
+    "prev": ROOT + "/data/imputation_feature/prev",
+    "installments": ROOT + "/data/imputation_feature/installments",
+    "credit_card": ROOT + "/data/imputation_feature/credit_card",
+    "pos_cash": ROOT + "/data/imputation_feature/pos_cash",
+    "bureau": ROOT + "/data/imputation_feature/bureau",
+    "bureau_balance": ROOT + "/data/imputation_feature/bureau_balance",
+    "description": ROOT + "/data/imputation_feature/description"
+}

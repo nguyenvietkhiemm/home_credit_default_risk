@@ -8,19 +8,14 @@ from helpers.cache_clear import cache_clear
 get_pickle = utils.get_pickle
 _keep_vars = set(globals().keys())  # lưu biến gốc
 
-def installments_payments_extract(test_run=False):
-    if test_run:
-        print("extract installments payments")
-        for path in utils.get_pickle_paths(name="installments"):
-            print(path)
-        return
-    
-    installments = get_pickle("installments")
-    
-    prev = get_pickle("prev")[prev_use_cols]
+def preprocessing(installments, prev):
     installments.sort_values(["SK_ID_PREV", "DAYS_ENTRY_PAYMENT"], ascending=[True, True], inplace=True)
     installments.reset_index(drop=True, inplace=True)
+    
     installments["index"] = installments.index
+    
+    prev['CNT_PAYMENT'].replace(0, np.nan, inplace=True)
+    
     prev["exist"] = 1
     merged_df = pd.merge(
         installments[installments["SK_ID_PREV"].isin(installments[(installments["AMT_INSTALMENT"] == 0) | (installments["AMT_INSTALMENT"].isnull())]["SK_ID_PREV"].unique())],
@@ -47,6 +42,24 @@ def installments_payments_extract(test_run=False):
     installments = installments.merge(merged_df[merged_df["NUM_INSTALMENT_VERSION"] != 0][["index", "SK_ID_PREV", "filled_AMT_INSTALMENT"]], on=["index", "SK_ID_PREV"], how="left")
     installments.loc[~installments["filled_AMT_INSTALMENT"].isnull(), "AMT_INSTALMENT"] = installments["filled_AMT_INSTALMENT"]
     installments = installments.drop(["filled_AMT_INSTALMENT"], axis=1)
+    
+    return installments, prev
+
+
+def installments_payments_extract(test_run=False):
+    if test_run:
+        print("extract installments payments")
+        for path in utils.get_pickle_paths(name="installments"):
+            print(path)
+        return
+
+    installments = get_pickle("installments")
+    _keep_vars.update(["installments"])
+
+    prev = get_pickle("prev")[prev_use_cols]
+    
+    installments, prev = preprocessing(installments, prev)
+    
     installments["days_delayed_payment"] = installments["DAYS_ENTRY_PAYMENT"] - installments["DAYS_INSTALMENT"]
     installments["AMT_PAYMENT-s-AMT_INSTALMENT"] = installments["AMT_PAYMENT"] - installments["AMT_INSTALMENT"]  # chênh lệch giữa số tiền trả thực tế và số tiền phải trả theo quy định
     installments["AMT_PAYMENT-d-AMT_INSTALMENT"] = installments["AMT_PAYMENT"] / installments["AMT_INSTALMENT"]  # tỉ lệ giữa số tiền trả thực tế và số tiền phải trả theo quy định
@@ -57,19 +70,24 @@ def installments_payments_extract(test_run=False):
     installments['DPD'] = installments['DPD'].apply(lambda x: x if x > 0 else 0)
     installments['DBD'] = installments['DBD'].apply(lambda x: x if x > 0 else 0)
     installments['month'] = (installments['DAYS_ENTRY_PAYMENT'] / 30).map(np.floor)
-    prev['CNT_PAYMENT'].replace(0, np.nan, inplace=True)
+    
     installments = installments.merge(prev[["SK_ID_PREV", "CNT_PAYMENT", "AMT_ANNUITY"]], on="SK_ID_PREV", how='left')
+    
+    cache_clear(globals(), _keep_vars)
+    
     installments["NUM_INSTALMENT_ratio"] = installments["NUM_INSTALMENT_NUMBER"] / installments["CNT_PAYMENT"]
     installments['AMT_PAYMENT-d-AMT_ANNUITY'] = installments['AMT_PAYMENT'] / installments['AMT_ANNUITY']
-    _keep_vars.update(["installments"])
-    cache_clear(globals(), _keep_vars)
-
+    
     trte = utils.get_trte()
     drop_cols = list(set(list(trte.columns) + ["CNT_PAYMENT", "AMT_ANNUITY", "index"]))
     for col in ["SK_ID_PREV", "SK_ID_CURR"]:
         if col in drop_cols:
             drop_cols.remove(col)
+            
     installments = installments.merge(trte, on="SK_ID_CURR", how='left')
+    
+    cache_clear(globals(), _keep_vars)
+    
     installments['DAYS_ENTRY_PAYMENT-s-app_DAYS_BIRTH'] = installments['DAYS_ENTRY_PAYMENT'] - installments['app_DAYS_BIRTH']
     installments['DAYS_ENTRY_PAYMENT-s-app_DAYS_EMPLOYED'] = installments['DAYS_ENTRY_PAYMENT'] - installments['app_DAYS_EMPLOYED']
     installments['DAYS_ENTRY_PAYMENT-s-app_DAYS_REGISTRATION'] = installments['DAYS_ENTRY_PAYMENT'] - installments['app_DAYS_REGISTRATION']
@@ -79,10 +97,13 @@ def installments_payments_extract(test_run=False):
     installments['AMT_PAYMENT-d-app_AMT_CREDIT'] = installments['AMT_PAYMENT'] / installments['app_AMT_CREDIT']
     installments['AMT_PAYMENT-d-app_AMT_ANNUITY'] = installments['AMT_PAYMENT'] / installments['app_AMT_ANNUITY']
     installments['AMT_PAYMENT-d-app_AMT_GOODS_PRICE'] = installments['AMT_PAYMENT'] / installments['app_AMT_GOODS_PRICE']
+    
     installments.replace(np.inf, np.nan, inplace=True)
     installments.replace(-np.inf, np.nan, inplace=True)
-    installments.drop(columns=drop_cols, inplace=True)
-    utils.to_pickles(installments, "installments")
     
+    installments.drop(columns=drop_cols, inplace=True)
+    
+    utils.to_pickles(installments, "installments")
+
     print("extract installments payments")
     cache_clear(globals())

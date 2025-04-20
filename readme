@@ -1,1 +1,4 @@
 sử dụng setup.bat để khởi tạo môi trường và cấu hình ban đầu, cấu hình ROOT
+
+c++ 64 bit compiler: https://nuwen.net/mingw.html
+ví dụ lệnh complile: gcc -m64 -shared -o "D:/Data Science/modules/cpp/interest_rate.dll" "D:/Data Science/modules/cpp/interest_rate.cpp"

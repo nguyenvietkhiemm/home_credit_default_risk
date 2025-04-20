@@ -1,7 +1,7 @@
 # mã hóa dữ liệu rời rạc
 
 from sklearn.preprocessing import LabelEncoder
-
+from sklearn.model_selection import StratifiedKFold
 
 def label_encode(df, categorical_features):
     le = LabelEncoder()
@@ -10,3 +10,8 @@ def label_encode(df, categorical_features):
         le.fit(df[c])
         df[c] = le.transform(df[c])
     return df
+
+def target_encode(df, categorical_features):
+    skf = StratifiedKFold(n_splits=FOLD, shuffle=True, random_state=SEED)
+    
+    

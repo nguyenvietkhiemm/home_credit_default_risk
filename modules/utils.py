@@ -5,13 +5,13 @@ import numpy as np
 import os
 from sklearn.model_selection import KFold
 from config import reload
-from config import use_cols, rename_di, paths, processed_paths, feature_paths
+from config import use_cols, rename_di, paths, processed_paths, feature_paths, imputation_paths
 
 # reload()
 
 CHUNK_SIZE=100000
 
-def to_pickles(df, name=None, chunk_size=CHUNK_SIZE):
+def to_pickles(df, name=None, chunk_size=CHUNK_SIZE, dir="processed"):
     if name is None:
         print("name=None")
         return
@@ -22,6 +22,20 @@ def to_pickles(df, name=None, chunk_size=CHUNK_SIZE):
     n = len(df)
     for i in range(0, n, chunk_size):
         df.iloc[i:i+chunk_size].to_pickle(f"{path}/p_{i//chunk_size}.p")
+        
+def to_pickle(df, name=None, dir="processed", file_name="None"):
+    if name is None:
+        print("name=None")
+        return
+    if dir=="processed":
+        paths_dir = processed_paths[name]
+    elif dir=="feature":
+        paths_dir = feature_paths[name]
+    elif dir=="imputation":
+        paths_dir = imputation_paths[name]
+    os.makedirs(paths_dir, exist_ok=True)
+    
+    df.to_pickle(f"{paths_dir}/{file_name}.p")
 
 
 def get_pickle_paths(name=None, dir="processed"):
@@ -32,6 +46,9 @@ def get_pickle_paths(name=None, dir="processed"):
         paths_dir = processed_paths[name]
     elif dir=="feature":
         paths_dir = feature_paths[name]
+    elif dir=="imputation":
+        paths_dir = imputation_paths[name]
+    
         
     files = sorted(
         [os.path.join(paths_dir, f) for f in os.listdir(paths_dir) if f.endswith(".p")],
@@ -40,21 +57,17 @@ def get_pickle_paths(name=None, dir="processed"):
     
     return files
 
-def get_pickles(name=None, cols=None):
+def get_pickles(name=None, cols=None, dir="processed"):
     if name is None:
         print("name=None")
         return
-    path = processed_paths[name]
-    if not os.path.exists(path):
-        print(f"folder {path} not exist")
-        return None
+
+    files = get_pickle_paths(name, dir)
 
     if not cols:
-        files = sorted([f for f in os.listdir(path) if f.endswith(".p")])
-        dfs = [pd.read_pickle(os.path.join(path, f)) for f in files]
+        dfs = [pd.read_pickle(f) for f in files]
     else:
-        files = sorted([f for f in os.listdir(path) if f.endswith(".p")])
-        dfs = [pd.read_pickle(os.path.join(path, f))[cols] for f in files]
+        dfs = [pd.read_pickle(f)[cols] for f in files]
     return pd.concat(dfs, ignore_index=True)
 
 
