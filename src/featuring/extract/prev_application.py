@@ -149,7 +149,7 @@ def prev_extract(test_run=False):
             
     cache_clear(globals(), _keep_vars)
     
-    prev['cnt_paid'] = prev.apply(lambda x: min(np.ceil((x['DAYS_FIRST_DUE'] / -30) + 1), x['CNT_PAYMENT']), axis=1)
+    prev['cnt_paid'] = np.minimum(np.ceil((prev['DAYS_FIRST_DUE'] / -30) + 1), prev['CNT_PAYMENT'])
     prev['cnt_paid_ratio'] = prev['cnt_paid'] / prev['CNT_PAYMENT']
     prev['cnt_unpaid'] = prev['CNT_PAYMENT'] - prev['cnt_paid']
     prev['amt_paid'] = prev['AMT_ANNUITY'] * prev['cnt_paid']  # thực tế đã trả

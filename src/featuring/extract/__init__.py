@@ -24,11 +24,11 @@ def extract(test_run=True):
     
     # pos_cash_extract(test_run)
 
-    # installments_payments_extract(test_run)
+    installments_payments_extract(test_run)
     
     # credit_balance_extract(test_run)
 
-    bureau_extract(test_run)
-    return
+    # bureau_extract(test_run)
 
-    bureau_balance_extract(test_run)
+
+    # bureau_balance_extract(test_run)

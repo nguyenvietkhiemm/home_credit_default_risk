@@ -14,7 +14,7 @@ def preprocessing(installments, prev):
     
     installments["index"] = installments.index
     
-    prev['CNT_PAYMENT'].replace(0, np.nan, inplace=True)
+    prev['CNT_PAYMENT'] = prev['CNT_PAYMENT'].replace(0, np.nan)
     
     prev["exist"] = 1
     merged_df = pd.merge(
@@ -67,8 +67,8 @@ def installments_payments_extract(test_run=False):
     installments["days_weighted_delay_tsw3"] = installments['days_weighted_delayed_payment'] * (1 + (installments['DAYS_ENTRY_PAYMENT'] * 0.0003))  # time series weight decay = 0.0003
     installments['DPD'] = installments['DAYS_ENTRY_PAYMENT'] - installments['DAYS_INSTALMENT']
     installments['DBD'] = installments['DAYS_INSTALMENT'] - installments['DAYS_ENTRY_PAYMENT']
-    installments['DPD'] = installments['DPD'].apply(lambda x: x if x > 0 else 0)
-    installments['DBD'] = installments['DBD'].apply(lambda x: x if x > 0 else 0)
+    installments['DPD'] = installments['DPD'].clip(lower=0)
+    installments['DBD'] = installments['DBD'].clip(lower=0)
     installments['month'] = (installments['DAYS_ENTRY_PAYMENT'] / 30).map(np.floor)
     
     installments = installments.merge(prev[["SK_ID_PREV", "CNT_PAYMENT", "AMT_ANNUITY"]], on="SK_ID_PREV", how='left')

@@ -17,17 +17,23 @@ def calc_possible_rates(trte):
     N = len(trte)
     amt_annuity = trte["AMT_ANNUITY"].values.astype(np.float64)
     amt_credit = trte["AMT_CREDIT"].values.astype(np.float64)
-    cnts = np.full(N, 6, dtype=np.int32)  # hoặc có thể truyền mảng cnts khác
+    
+    possible_cnts = range(6, 84, 6)
+    rate_matrix = []
 
-    rates = np.zeros(N, dtype=np.float64)
-
-    cpp.interest_rate(amt_annuity, amt_credit, cnts, rates, N)
-
+    for cnt in possible_cnts:
+        cnts = np.full(N, cnt, dtype=np.int32)
+        rates = np.zeros(N, dtype=np.float64)
+        cpp.interest_rate(amt_annuity, amt_credit, cnts, rates, N)
+        rate_matrix.append(rates)
+    
+    rate_matrix = np.array(rate_matrix)
+    
     return pd.DataFrame({
-        'interest_rate_min': rates,
-        'interest_rate_max': rates,
-        'interest_rate_median': rates,
-        'interest_rate_std': np.zeros(N)
+        'interest_rate_min': np.nanmin(rate_matrix, axis=0),
+        'interest_rate_max': np.nanmax(rate_matrix, axis=0),
+        'interest_rate_median': np.nanmedian(rate_matrix, axis=0),
+        'interest_rate_std': np.nanstd(rate_matrix, axis=0)
     }, index=trte.index)
 
 def pred_interest_rate():
@@ -59,4 +65,4 @@ def pred_interest_rate():
     # only python: 136s với 1 cnt
     # python + njit: 76,67s với 1 cnt
     # c++: 67s với 1 cnt
-    # c++ tối ưu vector và ngắt với ngưỡng delta hội tụ: 1.3s ??
+    # c++ tối ưu vector và ngắt với ngưỡng delta hội tụ: 1.3s ?? và ~4s cho possible_cnt
