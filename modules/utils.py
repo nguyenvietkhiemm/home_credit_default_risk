@@ -9,9 +9,9 @@ from config import use_cols, rename_di, paths, processed_paths, feature_paths, i
 
 # reload()
 
-CHUNK_SIZE=100000
+SIZE=10000
 
-def to_pickles(df, name=None, chunk_size=CHUNK_SIZE, dir="processed"):
+def to_pickles(df, name=None, size=SIZE, dir="processed", key="SK_ID_CURR"):
     if name is None:
         print("name=None")
         return
@@ -19,9 +19,15 @@ def to_pickles(df, name=None, chunk_size=CHUNK_SIZE, dir="processed"):
     path = processed_paths[name]
     os.makedirs(path, exist_ok=True)
 
-    n = len(df)
-    for i in range(0, n, chunk_size):
-        df.iloc[i:i+chunk_size].to_pickle(f"{path}/p_{i//chunk_size}.p")
+    df = df.sort_values(key)
+    grouped = df.groupby(key).groups  # Trả về dict {key: index_list}
+    keys = list(grouped.keys())
+
+    for i in range(0, len(keys), size):
+        selected_keys = keys[i:i+size]
+        idx = [i for k in selected_keys for i in grouped[k]]
+        df_chunk = df.loc[idx].sort_index()
+        df_chunk.to_pickle(f"{path}/p_{i//size}.p")
         
 def to_pickle(df, name=None, dir="processed", file_name="None"):
     if name is None:

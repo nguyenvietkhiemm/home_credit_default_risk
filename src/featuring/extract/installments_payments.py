@@ -105,5 +105,4 @@ def installments_payments_extract(test_run=False):
     
     utils.to_pickles(installments, "installments")
 
-    print("extract installments payments")
     cache_clear(globals())

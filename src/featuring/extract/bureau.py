@@ -73,5 +73,4 @@ def bureau_extract(test_run=False):
     bureau = pd.concat([bureau, diff_pctchange], axis=1)
     utils.to_pickles(bureau, "bureau")
 
-    print("extract bureau")
     cache_clear(globals())

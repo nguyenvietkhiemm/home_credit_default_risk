@@ -16,6 +16,9 @@ def bureau_balance_extract(test_run=False):
         return
 
     bureau_balance = get_pickle("bureau_balance")
+    bureau = get_pickle("bureau")[["SK_ID_BUREAU", "SK_ID_CURR"]]
+    
+    bureau_balance = pd.merge(bureau_balance, bureau, on="SK_ID_BUREAU", how="left")
 
     bureau_balance = pd.get_dummies(bureau_balance, columns=['STATUS'])  # one hot encode
     
@@ -24,5 +27,4 @@ def bureau_balance_extract(test_run=False):
     
     utils.to_pickles(bureau_balance, "bureau_balance")
 
-    print("extract bureau balance")
     cache_clear(globals())

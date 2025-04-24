@@ -81,21 +81,16 @@ def credit_balance_extract(test_run=False):
     credit_balance.sort_values(['SK_ID_PREV', 'MONTHS_BALANCE'], inplace=True)
     credit_balance.reset_index(drop=True, inplace=True)
     
-    diff_pctchange = multi.diff_pctchange(cols, credit_balance)
-    
     utils.to_pickles(credit_balance, "credit_card")
 
-    i = 0
     for path in utils.get_pickle_paths(name="credit_card"):
         credit_balance = pd.read_pickle(path)
-        df_batch = diff_pctchange.iloc[i:i + credit_balance.shape[0]]
-        merged = df_batch.join(credit_balance)
+        diff_pctchange = multi.diff_pctchange(cols, credit_balance)
+        
+        merged = credit_balance.join(diff_pctchange)
         
         merged.replace(np.inf, np.nan, inplace=True)
         merged.replace(-np.inf, np.nan, inplace=True)
         
         merged.to_pickle(path)
-        i += credit_balance.shape[0]
-
-    print("extract credit balance")
     cache_clear(globals())

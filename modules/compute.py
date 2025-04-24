@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import modules.cpp as cpp
 
-def interest_rate(df: pd.DataFrame, n_iter: int = 500, init_rate: float = 0.9, tolerance: float = 1e-6) -> pd.DataFrame:
+def interest_rate(df: pd.DataFrame, n_iter: int = 500, init_rate: float = 0.9, tolerance: float = 1e-6) -> pd.DataFrame: # tính interest_rate và trả về df
     _df = df.copy()
     
     N = len(_df)

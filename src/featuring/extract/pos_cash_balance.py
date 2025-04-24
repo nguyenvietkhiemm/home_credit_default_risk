@@ -53,5 +53,4 @@ def pos_cash_extract(test_run=False):
     
     utils.to_pickles(pos_balance, "pos_cash")
 
-    print("extract pos cash")
     cache_clear(globals())

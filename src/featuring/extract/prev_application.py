@@ -117,7 +117,7 @@ def prev_extract(test_run=False):
     
     prev = compute.interest_rate(prev)
     
-    prev.sort_values(['SK_ID_CURR', 'DAYS_DECISION'], inplace=True)
+    prev.sort_values(['SK_ID_CURR', 'DAYS_DECISION'], inplace=True) # sort để tính diff theo DAYS_DECISION
     prev.reset_index(drop=True, inplace=True)
     
     cols = [
@@ -186,7 +186,5 @@ def prev_extract(test_run=False):
 
     for path in utils.get_pickle_paths(name="prev"):
         process_file(path, rem_max_unpaid, rem_max_paid).to_pickle(path)
-
-    print("extract prev")
 
     cache_clear(globals())
