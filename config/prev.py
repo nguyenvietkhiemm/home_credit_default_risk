@@ -26,7 +26,6 @@ prev_num_aggregations = {
     "RATE_DOWN_PAYMENT": stats,
     "SELLERPLACE_AREA": stats,
     "CNT_PAYMENT": stats,
-
     
     "DAYS_FIRST_DRAWING-s-DAYS_DECISIONS": stats,
     "DAYS_FIRST_DUE-s-DAYS_DECISIONS": stats,
@@ -262,11 +261,11 @@ prev_num_aggregations = {
     "DAYS_TERMINATION-d-app_DAYS_ID_PUBLISH": stats,
     "DAYS_TERMINATION-s-app_DAYS_LAST_PHONE_CHANGE": stats,
     "DAYS_TERMINATION-d-app_DAYS_LAST_PHONE_CHANGE": stats,
-    "cnt_paid": stats,
+    "cnt_paid": stats_sum,
     "cnt_paid_ratio": stats,
-    "cnt_unpaid": stats,
-    "amt_paid": stats,
-    "amt_unpaid": stats,
-    "active": stats,
-    "completed": stats
+    "cnt_unpaid": stats_sum,
+    "amt_paid": stats_sum,
+    "amt_unpaid": stats_sum,
+    "active": stats_sum,
+    "completed": stats_sum
 }

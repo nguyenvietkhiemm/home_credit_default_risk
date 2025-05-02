@@ -5,7 +5,7 @@ import numpy as np
 import os
 from sklearn.model_selection import KFold
 from config import reload
-from config import use_cols, rename_di, paths, processed_paths, feature_paths, imputation_paths
+from config import use_cols, rename_di, paths, processed_paths, feature_paths, imputation_paths, tmp_path
 
 # reload()
 
@@ -50,10 +50,10 @@ def get_pickle_paths(name=None, dir="processed"):
         return
     if dir=="processed":
         paths_dir = processed_paths[name]
-    elif dir=="feature":
-        paths_dir = feature_paths[name]
     elif dir=="imputation":
         paths_dir = imputation_paths[name]
+    elif dir=="tmp":
+        paths_dir = tmp_path
     
         
     files = sorted(
@@ -62,6 +62,19 @@ def get_pickle_paths(name=None, dir="processed"):
     )
     
     return files
+
+def get_feature_paths(name = "train", prefixes=[], is_train=True):
+    paths_dir = feature_paths[name]
+    if len(prefixes)>0:
+        files = []
+        for prefix in prefixes:
+            files += sorted([os.path.join(paths_dir, f) for f in os.listdir(paths_dir) if f.endswith(".f") and f.startswith(prefix)])
+    else:
+            files = sorted([os.path.join(paths_dir, f) for f in os.listdir(paths_dir) if f.endswith(".f")])
+    return files
+
+def get_TARGET_path():
+    return feature_paths["target"] + "/TARGET.f"
 
 def get_pickles(name=None, cols=None, dir="processed"):
     if name is None:
@@ -93,14 +106,61 @@ def get_trte(train=None, test=None):
     return trte
 
 
-def to_feature(df, name=None):
+def to_feature(df, name=None, append=False):
     if not name:
         print("name=None")
+        
     path = feature_paths[name]
+    
     if df.columns.duplicated().sum() > 0:
         raise Exception(
             f'duplicated!: { df.columns[df.columns.duplicated()] }')
+        
     df.reset_index(inplace=True, drop=True)
+    
     for c in df.columns:
-        df[[c]].to_feather(f'{path}/{c}.f')
+        f_path = f'{path}/{c.strip()}.f'.strip()
+        print(f_path)
+        if os.path.exists(f_path) and append:
+            old = pd.read_feather(f_path)
+            df_c = pd.concat([old, df[[c]]], ignore_index=True)
+        else:
+            df_c = df[[c]]
+        df_c.reset_index(drop=True).to_feather(f_path)
+    return
+
+
+def check_var(df, var_limit=0, sample_size=None):
+    df_ = df.sample(sample_size, random_state=71) if sample_size and df.shape[0] > sample_size else df
+
+    var = df_.var(numeric_only=True)  # tránh warning khi có cột object
+    col_var0 = var[var <= var_limit].index.tolist()
+
+    if col_var0:
+        print(f"remove var<={var_limit}: {col_var0}")
+    return col_var0
+
+def check_corr(df, corr_limit=1, sample_size=None):
+    if sample_size and df.shape[0] > sample_size:
+        df_ = df.sample(sample_size, random_state=71)
+    else:
+        df_ = df
+    
+    corr = df_.corr(method='pearson').abs()
+    a, b = np.where(corr >= corr_limit)
+    
+    col_corr1 = set(b[b != a])  
+    
+    if col_corr1:
+        col_corr1 = df.columns[list(col_corr1)]
+        print(f'remove corr>={corr_limit}: {col_corr1}')
+    
+    return col_corr1
+
+def remove_feature(df, var_limit=0, corr_limit=1, sample_size=None, only_var=True):
+    col_var0 = check_var(df,  var_limit=var_limit, sample_size=sample_size)
+    df.drop(col_var0, axis=1, inplace=True)
+    if only_var==False:
+        col_corr1 = check_corr(df, corr_limit=corr_limit, sample_size=sample_size)
+        df.drop(col_corr1, axis=1, inplace=True)
     return

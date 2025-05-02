@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import os
 
-from config import ROOT, app_day_cols, prev_day_cols, rename_di, use_cols  # lib này được khởi tạo ban đầu dự án
+from config import ROOT, app_day_cols, app_money_cols, prev_day_cols, rename_di, use_cols  # lib này được khởi tạo ban đầu dự án
 import modules.utils as utils
 import modules.multi as multi
 import modules.compute as compute
@@ -116,6 +116,7 @@ def prev_extract(test_run=False):
     prev['AMT_GOODS_PRICE-m-app_AMT_GOODS_PRICE-d-app_AMT_INCOME_TOTAL'] = prev['AMT_GOODS_PRICE-s-app_AMT_GOODS_PRICE'] / prev['app_AMT_INCOME_TOTAL']
     
     prev = compute.interest_rate(prev)
+    print("interest_rate oke")
     
     prev.sort_values(['SK_ID_CURR', 'DAYS_DECISION'], inplace=True) # sort để tính diff theo DAYS_DECISION
     prev.reset_index(drop=True, inplace=True)
@@ -149,6 +150,8 @@ def prev_extract(test_run=False):
             
     cache_clear(globals(), _keep_vars)
     
+    prev = prev.drop(app_money_cols + app_day_cols, axis=1)
+    
     prev['cnt_paid'] = np.minimum(np.ceil((prev['DAYS_FIRST_DUE'] / -30) + 1), prev['CNT_PAYMENT'])
     prev['cnt_paid_ratio'] = prev['cnt_paid'] / prev['CNT_PAYMENT']
     prev['cnt_unpaid'] = prev['CNT_PAYMENT'] - prev['cnt_paid']
@@ -168,14 +171,18 @@ def prev_extract(test_run=False):
         cnt_unpaid = prev['cnt_unpaid'].values
         cnt_paid = prev['cnt_paid'].values
         amt_annuity = prev['AMT_ANNUITY'].values
+        
         future_mask = np.arange(rem_max_unpaid) < cnt_unpaid[:, None]
         future_amt = np.where(future_mask, amt_annuity[:, None], np.nan)
         future_cols = [f'future_payment_{i+1}m' for i in range(rem_max_unpaid)]
+        
         past_mask = np.arange(rem_max_paid) < cnt_paid[:, None]
         past_amt = np.where(past_mask, amt_annuity[:, None], np.nan)
         past_cols = [f'past_payment_{i+1}m' for i in range(rem_max_paid)]
+        
         df_future = pd.DataFrame(future_amt, columns=future_cols, index=prev.index)
         df_past = pd.DataFrame(past_amt, columns=past_cols, index=prev.index)
+        
         prev = pd.concat([prev, df_past, df_future], axis=1)
         
         prev.replace(np.inf, np.nan, inplace=True)

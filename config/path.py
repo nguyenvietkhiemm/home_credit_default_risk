@@ -27,13 +27,7 @@ processed_paths = {
 feature_paths = {
     "train": ROOT + "/data/feature/train",
     "test": ROOT + "/data/feature/test",
-    "prev": ROOT + "/data/feature/prev",
-    "installments": ROOT + "/data/feature/installments",
-    "credit_card": ROOT + "/data/feature/credit_card",
-    "pos_cash": ROOT + "/data/feature/pos_cash",
-    "bureau": ROOT + "/data/feature/bureau",
-    "bureau_balance": ROOT + "/data/feature/bureau_balance",
-    "description": ROOT + "/data/feature/description"
+    "target": ROOT + "/data/feature"
 }
 
 imputation_paths = {
@@ -47,3 +41,5 @@ imputation_paths = {
     "bureau_balance": ROOT + "/data/imputation_feature/bureau_balance",
     "description": ROOT + "/data/imputation_feature/description"
 }
+
+tmp_path = ROOT + "/data/tmp"

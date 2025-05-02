@@ -23,5 +23,7 @@ def target_encode(train, test):
     test = test[["SK_ID_CURR"] + app_categorical_features]
     
     train, test = encode.target_encode(train, test, app_categorical_features)
+    
+    train = train.drop(["TARGET"], axis=1)
 
     return train, test

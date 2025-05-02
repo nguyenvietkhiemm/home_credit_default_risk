@@ -21,3 +21,11 @@ alittledaisy.pem
 models
 /models
 ./models
+
+LightGBM
+/LightGBM
+./LightGBM
+
+note.txt
+/note.txt
+./note.txt

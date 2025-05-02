@@ -21,4 +21,4 @@ def interest_rate(amt_annuity, amt_credit, cnt_payment, rates, N, tol=1e-7, max_
 # only python: 136s với 1 cnt
 # python + njit: 76,67s với 1 cnt
 # c++: 67s với 1 cnt
-# c++ tối ưu vector và ngắt với ngưỡng delta hội tụ: 1.3s ?? và ~4s cho possible_cnt
+# c++ tối ưu vector và ngắt với ngưỡng delta hội tụ: 1.3s và ~4s cho possible_cnt

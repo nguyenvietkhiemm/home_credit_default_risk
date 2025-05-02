@@ -156,7 +156,7 @@ def train_test_extract(test_run=False):
     trte.replace(np.inf, np.nan, inplace=True)
     trte.replace(-np.inf, np.nan, inplace=True)
     
-    utils.to_pickles(trte[trte["data"] == 1], "train", size=100000)
-    utils.to_pickles(trte[trte["data"] == 0], "test", size=100000)
+    utils.to_pickles(trte[trte["data"] == 1].drop(["data"], axis=1), "train", size=100000)
+    utils.to_pickles(trte[trte["data"] == 0].drop(["data"], axis=1), "test", size=100000)
 
     cache_clear(globals())

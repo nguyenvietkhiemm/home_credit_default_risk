@@ -1,4 +1,67 @@
 sử dụng setup.bat để khởi tạo môi trường và cấu hình ban đầu, cấu hình ROOT
 
-c++ 64 bit compiler: https://nuwen.net/mingw.html
+pip cache purge
+
+===================================================================================================================================
+
+lưu ý: src chạy trên i5 11400H + rtx3050 CUDA backend để xử lý song song các phép toán cần nhiều phép tính. src cũng sử dụng C++ để giải quyết phép toán cần hiệu suất cao
+c++ 64 bit compiler, mingw64 và các distro liên quan: https://nuwen.net/mingw.html
 ví dụ lệnh complile: gcc -m64 -shared -o "D:/Data Science/modules/cpp/interest_rate.dll" "D:/Data Science/modules/cpp/interest_rate.cpp"
+
+===================================================================================================================================
+
+LightGBM gpu: tôi dùng Cmake + Boost 1.81 (các bản 1.81+ đang bị lỗi digest) + mingw/msvc + CUDA
+(compile boost bằng mingw khá hạn chế hỗ trợ, lightgbm hỗ trợ rất nhiều cho người sử dụng msvc nhưng msvc cần cài visual studio tím hoặc window SDKs)
+
+ví dụ với máy tôi:
+
+(sau khi compile boost bằng mingw gcc)
+
+git clone --recursive https://github.com/microsoft/LightGBM # mã nguồn git của lightgbm. clone về vị trí project
+cd LightGBM
+
+cmake -B build -S .` # tạo file build cmake trong thư mục project
+  -G "MinGW Makefiles" `
+  -DUSE_GPU=ON `  # option GPU
+  -DBOOST_ROOT="D:/boost/boost-build" ` # thư viện boost đã compile bằng mingw/gcc
+  -DBoost_LIBRARY_DIR="D:/boost/boost-build/lib" ` # thư viện boost đã compile
+  -DOpenCL_LIBRARY="C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/lib/x64/OpenCL.lib" ` # thư viện cuda
+  -DOpenCL_INCLUDE_DIR="C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include" # thư viện cuda
+
+cmake -B build -S .`
+  -G "MinGW Makefiles" `
+  -DUSE_GPU=ON `
+  -DBOOST_ROOT="D:/boost/boost-build" `
+  -DBoost_LIBRARY_DIR="D:/boost/boost-build/lib" `
+  -DOpenCL_LIBRARY="C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/lib/x64/OpenCL.lib" `
+  -DOpenCL_INCLUDE_DIR="C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include"
+
+(trong lúc cài sẽ có cảnh báo CL_VERSION nhưng không sao vì nó sẽ set default = 300)
+
+cmake --build build -j8 # build lightgbm với 8 nhân CPU (tùy chỉnh mỗi máy)
+
+(sau khi build xong ta sẽ có lib_lightgbm.dll + lib_lightgbm.dll.a (là hai thư viện động của lightgbm) + lightgbm.exe là CLI)
+(ta hoàn toàn có thể copy thư viện đã build vào venv, xây dựng các python binding cung cấp API để dùng như thể đã pip install lightgbm)
+(cách này chạy được, nhưng sẽ gặp trường hợp nghẽn cổ chai vì lí do nào đó khiến CPU load 100% còn GPU load khoảng 50 - 60%)
+
+[ngoài ra có thể sử dụng wsl trên win để dùng ubuntu build cũng được vì lightgbm-gpu hỗ trợ nhiều cho linux]
+
+==========================
+
+hoặc đơn giản hơn (nhưng trong tương lai có thể sẽ lỗi):
+# các dependence path là của máy cá nhân
+
+pip install lightgbm --no-binary lightgbm `
+    --config-settings=cmake.define.USE_GPU=ON ` # mặc định dùng OpenCL của CUDA
+    --config-settings=cmake.define.CUDA_TOOLKIT_ROOT_DIR="C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8" `
+    --config-settings=cmake.args="-GMinGW Makefiles" `
+    --config-settings=cmake.define.CMAKE_C_COMPILER="D:/mingw/MinGW/bin/gcc.exe" `
+    --config-settings=cmake.define.CMAKE_CXX_COMPILER="D:/mingw/MinGW/bin/g++.exe" `
+    --config-settings=cmake.define.OpenCL_INCLUDE_DIR="C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include" `
+    --config-settings=cmake.define.OpenCL_LIBRARY="C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/lib/x64/OpenCL.lib" `
+    --config-settings=cmake.define.BOOST_ROOT="D:/boost/boost-build" `
+    --config-settings=cmake.define.Boost_LIBRARY_DIR="D:/boost/boost-build/lib"`
+    --config-settings=cmake.define.__BUILD_FOR_PYTHON=ON # trong mã nguồn git của microsoft, file python-package/pyproject.toml đã config rồi nhưng chắc thiếu ở đâu đó mà phải config thủ công mới chạy đúng
+  #  --config-settings=cmake.define.USE_CUDA=ON ` # CẢNH BÁO: bỏ flag USE_CUDA = ON vì trong CMakeFile lấy từ pip install sẽ mặc định lấy file .cu để boost, thêm nữa compiler .cu là nvcc (nvcc lại phụ thuộc msvc)
+
+# ngoài việc sử dụng mingw, boost,... đã cài sẵn trên máy thì trang chủ cũng hỗ trợ các bộ compiler nhưng vì phụ thuộc nên hay lỗi

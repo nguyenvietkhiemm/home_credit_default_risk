@@ -14,8 +14,8 @@ def featuring():
     
     # print("==train_test_featuring==")
     # t0 = time.time()
-    # train = utils.get_pickle("train")
-    # test = utils.get_pickle("test")
+    # train = utils.get_pickles("train")
+    # test = utils.get_pickles("test")
     # train_test_featuring(train, test)
     # print(f"train_test_featuring {time.time() - t0:.2f}s")
     
@@ -44,10 +44,10 @@ def featuring():
     # bureau_featuring()
     # print(f"bureau_featuring {time.time() - t0:.2f}s")
     
-    print("==bureau_balance_featuring==")
-    t0 = time.time()
-    bureau_balance_featuring()
-    print(f"bureau_balance_featuring {time.time() - t0:.2f}s")
+    # print("==bureau_balance_featuring==")
+    # t0 = time.time()
+    # bureau_balance_featuring()
+    # print(f"bureau_balance_featuring {time.time() - t0:.2f}s")
     
     # encode()
     
@@ -56,4 +56,4 @@ def featuring():
     # aggregation()
     
     print("=====[DONE featuring]=====")
-featuring()
+featuring() # test
