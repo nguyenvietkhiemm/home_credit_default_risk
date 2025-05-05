@@ -2,13 +2,13 @@ sử dụng setup.bat để khởi tạo môi trường và cấu hình ban đ�
 
 pip cache purge
 
-===================================================================================================================================
+==============================================================================================================================
 
 lưu ý: src chạy trên i5 11400H + rtx3050 CUDA backend để xử lý song song các phép toán cần nhiều phép tính. src cũng sử dụng C++ để giải quyết phép toán cần hiệu suất cao
 c++ 64 bit compiler, mingw64 và các distro liên quan: https://nuwen.net/mingw.html
 ví dụ lệnh complile: gcc -m64 -shared -o "D:/Data Science/modules/cpp/interest_rate.dll" "D:/Data Science/modules/cpp/interest_rate.cpp"
 
-===================================================================================================================================
+==============================================================================================================================
 
 LightGBM gpu: tôi dùng Cmake + Boost 1.81 (các bản 1.81+ đang bị lỗi digest) + mingw/msvc + CUDA
 (compile boost bằng mingw khá hạn chế hỗ trợ, lightgbm hỗ trợ rất nhiều cho người sử dụng msvc nhưng msvc cần cài visual studio tím hoặc window SDKs)
@@ -44,7 +44,7 @@ cmake --build build -j8 # build lightgbm với 8 nhân CPU (tùy chỉnh mỗi m
 (ta hoàn toàn có thể copy thư viện đã build vào venv, xây dựng các python binding cung cấp API để dùng như thể đã pip install lightgbm)
 (cách này chạy được, nhưng sẽ gặp trường hợp nghẽn cổ chai vì lí do nào đó khiến CPU load 100% còn GPU load khoảng 50 - 60%)
 
-[ngoài ra có thể sử dụng wsl trên win để dùng ubuntu build cũng được vì lightgbm-gpu hỗ trợ nhiều cho linux]
+[ngoài ra có thể sử dụng wsl trên win để dùng ubuntu build cũng được vì lightgbm-gpu hỗ trợ nhiều cho linux nhưng vì kiến trúc khác nhau, vẫn có thể có lỗi 32-64bit khi compile C]
 
 ==========================
 
