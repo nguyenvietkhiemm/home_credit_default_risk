@@ -2,13 +2,13 @@ sử dụng setup.bat để khởi tạo môi trường và cấu hình ban đ�
 
 pip cache purge
 
-==============================================================================================================================
+============================================================================================================================
 
 lưu ý: src chạy trên i5 11400H + rtx3050 CUDA backend để xử lý song song các phép toán cần nhiều phép tính. src cũng sử dụng C++ để giải quyết phép toán cần hiệu suất cao
 c++ 64 bit compiler, mingw64 và các distro liên quan: https://nuwen.net/mingw.html
 ví dụ lệnh complile: gcc -m64 -shared -o "D:/Data Science/modules/cpp/interest_rate.dll" "D:/Data Science/modules/cpp/interest_rate.cpp"
 
-==============================================================================================================================
+============================================================================================================================
 
 LightGBM gpu: tôi dùng Cmake + Boost 1.81 (các bản 1.81+ đang bị lỗi digest) + mingw/msvc + CUDA
 (compile boost bằng mingw khá hạn chế hỗ trợ, lightgbm hỗ trợ rất nhiều cho người sử dụng msvc nhưng msvc cần cài visual studio tím hoặc window SDKs)
